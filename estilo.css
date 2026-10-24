@@ -1,0 +1,26 @@
+:root{--fundo:#F4F5F9;--superficie:#FFFFFF;--superficie-2:#EEF0F5;--linha:#E4E7EE;--texto:#12151C;--texto-2:#5A6272;--destaque:#4E3FD0;--destaque-texto:#FFFFFF;--destaque-forte:#3A2DA8;color-scheme:light dark}
+@media (prefers-color-scheme:dark){:root{--fundo:#0D1015;--superficie:#161A21;--superficie-2:#1E232C;--linha:#262C36;--texto:#EEF1F6;--texto-2:#A3ACBA;--destaque:#8B7CFF;--destaque-texto:#0D1015;--destaque-forte:#B3A9FF}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fundo);color:var(--texto);font:500 16px/1.6 Manrope,"Segoe UI",system-ui,sans-serif}
+a{color:var(--destaque-forte)}
+.topo,.conteudo,.rodape{max-width:760px;margin:0 auto;padding:0 20px}
+.topo{display:flex;align-items:center;gap:12px;padding-top:24px;padding-bottom:8px}
+.topo a{text-decoration:none;color:var(--texto);display:flex;align-items:center;gap:12px;font-weight:700;font-size:18px}
+.marca{width:40px;height:40px;border-radius:12px;background:var(--destaque);color:var(--destaque-texto);display:grid;place-items:center;font-weight:800;font-size:24px;line-height:1}
+nav{display:flex;flex-wrap:wrap;gap:8px 16px;margin:8px auto 0;max-width:760px;padding:0 20px;font-size:14px;font-weight:600}
+nav a{color:var(--texto-2);text-decoration:none;padding:10px 0}
+nav a[aria-current]{color:var(--destaque-forte)}
+h1{font-size:28px;line-height:1.25;font-weight:800;letter-spacing:-.01em;margin:32px 0 8px}
+h2{font-size:18px;line-height:1.35;font-weight:700;margin:32px 0 8px}
+.versao{color:var(--texto-2);font-size:14px;margin:0 0 16px}
+.cartao{background:var(--superficie);border:1px solid var(--linha);border-radius:20px;padding:20px;margin:16px 0}
+.tabela{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14px;background:var(--superficie);border:1px solid var(--linha);border-radius:16px;overflow:hidden}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--linha)}
+th{background:var(--superficie-2);font-weight:700}
+tr:last-child td{border-bottom:0}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;margin:0}
+dt{color:var(--texto-2)}dd{margin:0;font-weight:600;overflow-wrap:anywhere}
+ol li,ul li{margin:4px 0}
+.rodape{color:var(--texto-2);font-size:13px;padding-top:32px;padding-bottom:40px;border-top:1px solid var(--linha);margin-top:48px}
+@media (max-width:480px){dl{grid-template-columns:1fr}dd{margin-bottom:8px}h1{font-size:24px}}
