@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Alpha: temas com avatar</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap">
+<style>
+/* Protótipo A52: um celular de 412 px no centro, painel de simulação embaixo (rola com a página).
+   Tokens do Alpha Design System (Grafite). O avatar troca só destaque, destaque-texto, destaque-suave,
+   destaque-forte, aviso-acao, sombra-flutuante, o tom do fundo e cat-1 a cat-5; estado, textos e linhas ficam. */
+:root{
+  --fundo:#F4F5F9;--superficie:#FFFFFF;--superficie-2:#EEF0F5;--barra:#FFFFFF;--linha:#E4E7EE;--linha-controle:#8A93A6;
+  --texto:#12151C;--texto-2:#5A6272;--destaque:#4E3FD0;--destaque-texto:#FFFFFF;--destaque-suave:#ECE9FF;--destaque-forte:#3A2DA8;
+  --aviso-acao:#B3A9FF;--bom:#11845A;--bom-suave:#E3F4EC;--atencao:#8A5800;--atencao-suave:#FDF3DC;--erro:#B42323;--erro-suave:#FCEBEB;
+  --sombra-flutuante:0 10px 24px rgba(78,63,208,0.30);--veu:rgba(18,21,28,0.45);
+  --font-sans:Manrope,"Segoe UI",system-ui,sans-serif;
+  --espaco-1:4px;--espaco-2:8px;--espaco-3:12px;--espaco-4:16px;--espaco-5:20px;--espaco-6:24px;--espaco-8:32px;
+  --raio-sm:10px;--raio-md:16px;--raio-lg:20px;--raio-xl:24px;--raio-pill:999px;
+  --alvo-toque:44px;--icone:22px;--poco-icone:36px;--botao-chat:60px;--barra-nav:80px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --fundo:#0D1015;--superficie:#161A21;--superficie-2:#1E232C;--barra:#12161C;--linha:#262C36;--linha-controle:#69738A;
+  --texto:#EEF1F6;--texto-2:#A3ACBA;--destaque:#8B7CFF;--destaque-texto:#0D1015;--destaque-suave:#8B7CFF2E;--destaque-forte:#B3A9FF;
+  --aviso-acao:#3A2DA8;--bom:#3DD68C;--bom-suave:#3DD68C24;--atencao:#F5B946;--atencao-suave:#F5B94624;--erro:#FF8A8A;--erro-suave:#FF6B6B24;
+  --sombra-flutuante:0 10px 28px rgba(0,0,0,0.5);--veu:rgba(0,0,0,0.6);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --fundo:#0D1015;--superficie:#161A21;--superficie-2:#1E232C;--barra:#12161C;--linha:#262C36;--linha-controle:#69738A;
+  --texto:#EEF1F6;--texto-2:#A3ACBA;--destaque:#8B7CFF;--destaque-texto:#0D1015;--destaque-suave:#8B7CFF2E;--destaque-forte:#B3A9FF;
+  --aviso-acao:#3A2DA8;--bom:#3DD68C;--bom-suave:#3DD68C24;--atencao:#F5B946;--atencao-suave:#F5B94624;--erro:#FF8A8A;--erro-suave:#FF6B6B24;
+  --sombra-flutuante:0 10px 28px rgba(0,0,0,0.5);--veu:rgba(0,0,0,0.6);color-scheme:dark}
+/* Base do celular por tema; o avatar entra por cima, com variáveis na própria .cel (ou num pedaço de prévia) */
+.cel[data-t="claro"],.mini[data-t="claro"]{
+  --fundo:#F4F5F9;--superficie:#FFFFFF;--superficie-2:#EEF0F5;--barra:#FFFFFF;--linha:#E4E7EE;--linha-controle:#8A93A6;
+  --texto:#12151C;--texto-2:#5A6272;--bom:#11845A;--bom-suave:#E3F4EC;--atencao:#8A5800;--atencao-suave:#FDF3DC;--erro:#B42323;--erro-suave:#FCEBEB;
+  --veu:rgba(18,21,28,0.45);--cat-outros:#E2E5EC;color-scheme:light}
+.cel[data-t="escuro"],.mini[data-t="escuro"]{
+  --fundo:#0D1015;--superficie:#161A21;--superficie-2:#1E232C;--barra:#12161C;--linha:#262C36;--linha-controle:#69738A;
+  --texto:#EEF1F6;--texto-2:#A3ACBA;--bom:#3DD68C;--bom-suave:#3DD68C24;--atencao:#F5B946;--atencao-suave:#F5B94624;--erro:#FF8A8A;--erro-suave:#FF6B6B24;
+  --veu:rgba(0,0,0,0.6);--cat-outros:#2A303B;color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{overflow-x:hidden}
+body{margin:0;background:var(--fundo);color:var(--texto);font-family:var(--font-sans);font-size:15px;line-height:22px;font-variant-numeric:tabular-nums;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 32px}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid var(--destaque-forte);outline-offset:2px}
+svg.i{width:var(--icone);height:var(--icone);flex:none}
+
+.pagina{max-width:412px;margin:0 auto;display:flex;flex-direction:column;gap:var(--espaco-6)}
+.cel{position:relative;width:100%;height:min(840px,calc(100svh - 32px));min-height:620px;background:var(--fundo);color:var(--texto);
+  border:1px solid var(--linha);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;transition:background .25s}
+@media (prefers-reduced-motion:reduce){.cel{transition:none}}
+.tela{flex:1;display:flex;flex-direction:column;min-height:0}
+
+.titulo-tela{font-size:22px;line-height:28px;font-weight:700;margin:0}
+.saudacao{font-size:18px;line-height:24px;font-weight:700;margin:0}
+.titulo-secao{font-size:16px;line-height:22px;font-weight:700;margin:0}
+.legenda{font-size:13px;line-height:18px;font-weight:500;color:var(--texto-2);margin:0}
+.numero-hero{font-size:34px;line-height:36px;font-weight:800;letter-spacing:-.02em;margin:0}
+
+.topo{display:flex;align-items:center;gap:4px;min-height:60px;padding:8px 12px 0 4px}
+.topo .titulo-tela{flex:1;min-width:0}
+.topo.inicio{padding:12px 12px 0 20px;gap:12px}
+.topo.inicio .t{flex:1}
+.icone-btn{width:var(--alvo-toque);height:var(--alvo-toque);border:0;background:transparent;border-radius:var(--raio-pill);display:flex;align-items:center;justify-content:center;color:var(--texto);flex:none}
+.corpo{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:12px 20px 24px;display:flex;flex-direction:column;gap:var(--espaco-4)}
+.corpo>*{min-width:0}
+.corpo.com-nav{padding-bottom:110px}
+.secao{display:flex;flex-direction:column;gap:var(--espaco-2);margin-top:var(--espaco-2)}
+
+.btn{min-height:var(--alvo-toque);padding:0 20px;border-radius:var(--raio-pill);font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:0}
+.btn.principal{background:var(--destaque);color:var(--destaque-texto);min-height:52px}
+.btn.secundario{background:transparent;color:var(--texto);border:1.5px solid var(--linha-controle)}
+.btn.texto{background:transparent;color:var(--destaque-forte);width:auto;padding:0 12px}
+
+.marca{width:40px;height:40px;border-radius:12px;background:var(--destaque);color:var(--destaque-texto);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:24px;line-height:1;flex:none}
+
+/* Cartão de resumo e gráficos */
+.resumo{background:var(--superficie);border:1px solid var(--linha);border-radius:var(--raio-xl);padding:var(--espaco-5);display:flex;flex-direction:column;gap:var(--espaco-3)}
+.resumo .linha-topo{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.barras{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;align-items:end;height:84px}
+.barras div{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;height:100%;justify-content:flex-end}
+.barras i{display:block;width:100%;max-width:28px;border-radius:6px 6px 3px 3px;background:var(--cat-outros)}
+.barras .atual i{background:var(--destaque)}
+.barras span{font-size:11px;line-height:14px;font-weight:600;color:var(--texto-2)}
+.barras .atual span{color:var(--texto);font-weight:700}
+.empilha{display:flex;height:12px;border-radius:var(--raio-pill);overflow:hidden;gap:2px}
+.empilha i{display:block;height:100%}
+.legendas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px}
+.legendas span{display:flex;align-items:center;gap:6px;font-size:13px;line-height:18px;color:var(--texto-2);min-width:0}
+.legendas b{font-weight:600;color:var(--texto);margin-left:auto;white-space:nowrap}
+.legendas em{font-style:normal;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.legendas i{width:10px;height:10px;border-radius:3px;flex:none}
+
+/* Listas */
+.lista{border-radius:var(--raio-lg);background:var(--superficie);border:1px solid var(--linha);display:flex;flex-direction:column;overflow:hidden}
+.linha{display:flex;align-items:center;gap:var(--espaco-3);padding:12px var(--espaco-4);min-height:64px;border:0;border-bottom:1px solid var(--linha);background:transparent;text-align:left;width:100%;color:var(--texto)}
+.linha:last-child{border-bottom:0}
+.poco{width:var(--poco-icone);height:var(--poco-icone);border-radius:var(--raio-sm);display:flex;align-items:center;justify-content:center;flex:none;background:var(--superficie-2);color:var(--texto-2)}
+.poco svg{width:20px;height:20px}
+.poco.bom{background:var(--bom-suave);color:var(--bom)}
+.poco.atencao{background:var(--atencao-suave);color:var(--atencao)}
+.t{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.t b{font-size:15px;line-height:22px;font-weight:600}
+.t span{font-size:13px;line-height:18px;color:var(--texto-2)}
+.t span.a{color:var(--atencao)}
+.t span.b{color:var(--bom)}
+.v{font-size:15px;font-weight:700;white-space:nowrap}
+.seta{color:var(--texto-2)}
+
+.chips{display:flex;gap:var(--espaco-2);flex-wrap:wrap}
+.chip{min-height:36px;padding:0 14px;border-radius:var(--raio-pill);border:1.5px solid var(--linha-controle);background:transparent;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--texto)}
+.chip.on{background:var(--destaque-suave);border-color:transparent;color:var(--destaque-forte)}
+.atalho{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--raio-md);background:var(--destaque-suave);color:var(--destaque-forte);border:0;width:100%;text-align:left;min-height:56px}
+.atalho b{flex:1;font-weight:700}
+
+/* Barra de baixo e botão de chat */
+.nav{position:absolute;left:0;right:0;bottom:0;height:var(--barra-nav);background:var(--barra);border-top:1px solid var(--linha);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:8px 2px 12px;z-index:3}
+.nav button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;line-height:16px;font-weight:600;color:var(--texto-2);min-width:0}
+.nav .pil{width:56px;height:30px;border-radius:var(--raio-pill);display:flex;align-items:center;justify-content:center}
+.nav [aria-current="page"]{color:var(--texto);font-weight:700}
+.nav [aria-current="page"] .pil{background:var(--destaque-suave);color:var(--destaque-forte)}
+.fab{position:absolute;right:16px;bottom:calc(var(--barra-nav) + 16px);width:var(--botao-chat);height:var(--botao-chat);border-radius:50%;border:0;background:var(--destaque);color:var(--destaque-texto);box-shadow:var(--sombra-flutuante);display:flex;align-items:center;justify-content:center;z-index:3}
+.fab svg{width:26px;height:26px}
+
+/* Avatar (componente novo: Avatar). Alpha usa o mascote; os outros, arte provisória (símbolo de linha) */
+.av{border-radius:50%;background:var(--destaque-suave);color:var(--destaque-forte);display:flex;align-items:center;justify-content:center;flex:none;overflow:hidden}
+.av img{width:100%;height:100%;object-fit:contain;padding:10%}
+.av svg{width:58%;height:58%}
+.av.alpha{background:var(--superficie-2)}
+
+/* Linha do avatar em Ajustes */
+.linha-av .av{width:48px;height:48px}
+
+/* Controle segmentado */
+.seg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;border-radius:var(--raio-pill);border:1.5px solid var(--linha-controle);background:var(--superficie)}
+.seg button{min-height:40px;border:0;border-radius:var(--raio-pill);background:transparent;font-size:14px;font-weight:600;color:var(--texto-2);min-width:0}
+.seg button[aria-checked="true"]{background:var(--destaque-suave);color:var(--destaque-forte);font-weight:700}
+
+/* Folha (componente Folha) */
+.veu{position:absolute;inset:0;background:var(--veu);z-index:5;display:flex;align-items:flex-end}
+.folha{width:100%;max-height:92%;background:var(--barra);border-radius:var(--raio-xl) var(--raio-xl) 0 0;display:flex;flex-direction:column;min-height:0}
+.folha .pega{width:36px;height:4px;border-radius:2px;background:var(--linha-controle);margin:10px auto 0;opacity:.6}
+.folha .cab{display:flex;align-items:center;gap:8px;padding:8px 8px 0 20px}
+.folha .cab h2{flex:1;margin:0}
+.folha .meio{overflow-y:auto;padding:8px 20px 12px;display:flex;flex-direction:column;gap:var(--espaco-3);min-height:0}
+.folha .pe{padding:12px 20px 20px;border-top:1px solid var(--linha);display:flex;flex-direction:column;gap:8px}
+
+/* Opção A: grade de avatares */
+.grade{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--espaco-3)}
+.cartao-av{position:relative;border:1.5px solid var(--linha);background:var(--superficie);border-radius:var(--raio-lg);padding:14px 12px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;min-width:0;min-height:150px;color:var(--texto)}
+.cartao-av .av{width:64px;height:64px}
+.cartao-av b{font-size:15px;line-height:20px;font-weight:700}
+.cartao-av span{font-size:12px;line-height:16px;color:var(--texto-2)}
+.cartao-av[aria-checked="true"]{border:2.5px solid var(--destaque);padding:13px 11px 11px}
+.cartao-av .ok{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:50%;background:var(--destaque);color:var(--destaque-texto);display:flex;align-items:center;justify-content:center}
+.cartao-av .ok svg{width:16px;height:16px}
+.amostra{display:flex;gap:4px;justify-content:center}
+.amostra i{width:14px;height:14px;border-radius:4px;border:1px solid var(--linha)}
+.selo{position:absolute;top:8px;left:8px;display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:var(--raio-pill);background:var(--superficie-2);color:var(--texto-2);font-size:11px;line-height:16px;font-weight:700}
+.selo svg{width:12px;height:12px}
+
+/* Prévia (vale para A e B): um pedaço do app com as cores do avatar escolhido */
+.mini{background:var(--fundo);color:var(--texto);border:1px solid var(--linha);border-radius:var(--raio-lg);padding:12px;display:flex;flex-direction:column;gap:10px;transition:background .2s}
+@media (prefers-reduced-motion:reduce){.mini{transition:none}}
+.mini .cab-mini{font-size:12px;line-height:16px;font-weight:700;color:var(--texto-2)}
+.mini .fala{display:flex;align-items:flex-end;gap:8px}
+.mini .fala .av{width:32px;height:32px}
+.mini .fala p{margin:0;background:var(--superficie);border:1px solid var(--linha);border-radius:16px 16px 16px 6px;padding:8px 12px;font-size:14px;line-height:20px;min-width:0}
+.mini .acoes{display:flex;gap:8px;align-items:center}
+.mini .acoes .btn{width:auto;flex:1;min-height:44px}
+.mini .barras{height:56px}
+
+/* Opção B: carrossel em tela cheia */
+.carrossel{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;touch-action:pan-y}
+.carrossel .linha-c{display:flex;align-items:center;gap:8px;width:100%;justify-content:space-between}
+.carrossel .av{width:112px;height:112px}
+.carrossel h2{margin:4px 0 0}
+.pontos{display:flex;gap:6px;justify-content:center}
+.pontos i{width:8px;height:8px;border-radius:50%;background:var(--linha-controle);opacity:.5}
+.pontos i.on{background:var(--destaque);opacity:1;width:20px;border-radius:4px}
+
+/* Chat */
+.topo-chat{display:flex;align-items:center;gap:8px;padding:8px 12px 8px 4px;border-bottom:1px solid var(--linha);min-height:64px}
+.topo-chat .quem{flex:1;display:flex;align-items:center;gap:10px;border:0;background:transparent;text-align:left;min-height:44px;border-radius:var(--raio-md);padding:0 6px;min-width:0}
+.topo-chat .av{width:36px;height:36px}
+.msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.eu{align-self:flex-end;max-width:80%;background:var(--destaque);color:var(--destaque-texto);border-radius:18px 18px 6px 18px;padding:10px 14px}
+.ele{display:flex;align-items:flex-end;gap:8px;max-width:88%}
+.ele .av{width:32px;height:32px}
+.ele p{margin:0;background:var(--superficie);border:1px solid var(--linha);border-radius:18px 18px 18px 6px;padding:10px 14px;min-width:0}
+.compor{display:flex;gap:8px;align-items:center;padding:10px 12px 16px;border-top:1px solid var(--linha);background:var(--barra)}
+.compor .campo{flex:1;min-height:44px;border-radius:var(--raio-pill);border:1.5px solid var(--linha-controle);display:flex;align-items:center;padding:0 16px;color:var(--texto-2);font-size:15px;min-width:0}
+.compor .enviar{width:44px;height:44px;border-radius:50%;border:0;background:var(--destaque);color:var(--destaque-texto);display:flex;align-items:center;justify-content:center;flex:none}
+
+/* Aviso (componente Aviso) */
+.aviso{position:absolute;left:16px;right:16px;bottom:calc(var(--barra-nav) + 16px);background:var(--texto);color:var(--fundo);border-radius:var(--raio-md);padding:8px 8px 8px 16px;display:flex;align-items:center;gap:8px;box-shadow:var(--sombra-flutuante);z-index:6;min-height:52px}
+.aviso p{flex:1;margin:0;font-size:14px;line-height:20px;font-weight:600;min-width:0}
+.aviso button{border:0;background:transparent;color:var(--aviso-acao);font-weight:800;min-height:44px;padding:0 12px;border-radius:var(--raio-pill)}
+.aviso.alto{bottom:96px}
+
+/* Painel de simulação: rola com a página, nunca fixo */
+.painel{border:1px dashed var(--linha-controle);border-radius:var(--raio-lg);padding:var(--espaco-4);display:flex;flex-direction:column;gap:var(--espaco-3);background:var(--superficie)}
+.painel h2{margin:0;font-size:16px}
+.painel .grupo{display:flex;flex-direction:column;gap:6px}
+.painel .grupo>span{font-size:13px;font-weight:600;color:var(--texto-2)}
+.painel .seg.dois{grid-template-columns:repeat(2,minmax(0,1fr))}
+.painel .botoes{display:flex;flex-wrap:wrap;gap:8px}
+.painel .botoes .chip{min-height:44px}
+.nota{font-size:13px;line-height:19px;color:var(--texto-2);margin:0}
+</style>
+</head>
+<body>
+<div class="pagina">
+  <div class="cel" id="cel" data-t="claro"></div>
+  <section class="painel" aria-labelledby="tit-sim">
+    <h2 id="tit-sim">Simular</h2>
+    <div class="grupo"><span id="r-op">Tela de escolha (pergunta 1)</span>
+      <div class="seg dois" role="radiogroup" aria-labelledby="r-op" id="sim-op"></div></div>
+    <div class="grupo"><span id="r-tema">Tema do celular</span>
+      <div class="seg dois" role="radiogroup" aria-labelledby="r-tema" id="sim-tema"></div></div>
+    <div class="grupo"><span id="r-pago">Avatares do plano pago (pergunta 3, opção B)</span>
+      <div class="seg dois" role="radiogroup" aria-labelledby="r-pago" id="sim-pago"></div></div>
+    <div class="grupo"><span id="r-net">Internet</span>
+      <div class="seg dois" role="radiogroup" aria-labelledby="r-net" id="sim-net"></div></div>
+    <div class="grupo"><span>Ir para</span>
+      <div class="botoes" id="sim-ir"></div></div>
+    <p class="nota">Arte provisória: o Alpha usa o mascote de hoje; os outros quatro aparecem como símbolo de linha até a arte final (pergunta 2). As cores já são as finais e passam no contraste nos dois temas.</p>
+  </section>
+</div>
+<script>
+const MASCOTE='data:image/webp;base64,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';
+const P='<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+const I={
+  voltar:P+'<path d="M15 18l-6-6 6-6"/></svg>',
+  seta:P+'<path d="M9 18l6-6-6-6"/></svg>',
+  fechar:P+'<path d="M18 6L6 18M6 6l12 12"/></svg>',
+  sino:P+'<path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 003.4 0"/></svg>',
+  chat:P+'<path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/></svg>',
+  inicio:P+'<path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5v-6h-6v6H4a1 1 0 01-1-1z"/></svg>',
+  contas:P+'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg>',
+  gastos:P+'<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>',
+  dicas:P+'<path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.7V17h8v-2.3A7 7 0 0012 2z"/></svg>',
+  mais:P+'<circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg>',
+  casa:P+'<path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1z"/></svg>',
+  wifi:P+'<path d="M5 12.5a10 10 0 0114 0M8.5 16a5 5 0 017 0M12 19.5h.01"/></svg>',
+  check:P+'<path d="M20 6L9 17l-5-5"/></svg>',
+  cadeado:P+'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>',
+  enviar:P+'<path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  etiqueta:P+'<path d="M20.6 13.4l-7.2 7.2a2 2 0 01-2.8 0L3 13V3h10l7.6 7.6a2 2 0 010 2.8z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg>',
+  ajustes:P+'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>'
+};
+const ARTE={
+  sabio:P+'<path d="M12 21v-8"/><path d="M12 13c0-4.5 3-7.5 8-7.5 0 5-3 8-8 7.5z"/><path d="M12 15.5c0-3.2-2.4-5.5-6.5-5.5 0 4 2.4 5.8 6.5 5.5z"/></svg>',
+  sentinela:P+'<path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z"/><path d="M8.5 10.5l3.5 2.5 3.5-2.5M8.5 14.5l3.5 2.5 3.5-2.5"/></svg>',
+  navegante:P+'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>',
+  estrategista:P+'<path d="M7 21h10M8.5 21l1-8h5l1 8M7 4v3l2 3h6l2-3V4h-2.5v2h-2V4h-1v2h-2V4z"/></svg>'
+};
+/* Cada avatar: nome, aparência e as variáveis do tema nos dois modos. O fundo ganha 4% da cor; cat-1 é o destaque
+   e a categoria que ficaria parecida dá lugar ao violeta do Alpha. Contraste conferido (texto 4.5:1, controle 3:1). */
+const VIO={claro:'#4E3FD0',escuro:'#8B7CFF'};
+const CAT={claro:['#2E86DE','#E0A126','#1E9E6A','#D6457A'],escuro:['#5DB8FF','#F5B946','#3DD68C','#FF8FB1']};
+const AV=[
+  {id:'alpha',nome:'Alpha',jeito:'Violeta, o de sempre',
+   claro:{d:'#4E3FD0',dt:'#FFFFFF',df:'#3A2DA8',ds:'#ECE9FF',aa:'#B3A9FF',f:'#F4F5F9',s:'rgba(78,63,208,0.30)'},
+   escuro:{d:'#8B7CFF',dt:'#0D1015',df:'#B3A9FF',ds:'#8B7CFF2E',aa:'#3A2DA8',f:'#0D1015'},troca:-1},
+  {id:'sabio',nome:'Sábio',jeito:'Verde mata',
+   claro:{d:'#2E6B3C',dt:'#FFFFFF',df:'#1F4F2B',ds:'#E2F0E4',aa:'#9FD9AC',f:'#ECEFF1',s:'rgba(46,107,60,0.30)'},
+   escuro:{d:'#7CCB8C',dt:'#0D1015',df:'#A9E0B4',ds:'#7CCB8C2E',aa:'#1F4F2B',f:'#11171A'},troca:2},
+  {id:'sentinela',nome:'Sentinela',jeito:'Oliva, tom militar',
+   claro:{d:'#59601F',dt:'#FFFFFF',df:'#41471A',ds:'#EDEFD8',aa:'#C9D08A',f:'#EEEFF0',s:'rgba(89,96,31,0.30)'},
+   escuro:{d:'#B6BE6C',dt:'#0D1015',df:'#D0D69C',ds:'#B6BE6C2E',aa:'#41471A',f:'#141718'},troca:2},
+  {id:'navegante',nome:'Navegante',jeito:'Azul oceano',
+   claro:{d:'#1D5FAE',dt:'#FFFFFF',df:'#164A88',ds:'#E2ECF9',aa:'#9DC3F2',f:'#EBEFF6',s:'rgba(29,95,174,0.30)'},
+   escuro:{d:'#6EA8F0',dt:'#0D1015',df:'#A3C7F5',ds:'#6EA8F02E',aa:'#164A88',f:'#11161E'},troca:0},
+  {id:'estrategista',nome:'Estrategista',jeito:'Grafite, quase sem cor',
+   claro:{d:'#3E4A5C',dt:'#FFFFFF',df:'#2B3443',ds:'#E6E9EF',aa:'#B9C2D0',f:'#EDEEF3',s:'rgba(62,74,92,0.30)'},
+   escuro:{d:'#AEB9CA',dt:'#0D1015',df:'#CDD5E1',ds:'#AEB9CA2E',aa:'#2B3443',f:'#13171C'},troca:-1}
+];
+const PAGOS=['sentinela','estrategista'];
+const achar=id=>AV.find(a=>a.id===id)||AV[0];
+function vars(id,tema){
+  const a=achar(id),v=a[tema],c=CAT[tema].slice();
+  if(a.troca>=0)c[a.troca]=VIO[tema];
+  return '--destaque:'+v.d+';--destaque-texto:'+v.dt+';--destaque-forte:'+v.df+';--destaque-suave:'+v.ds+';--aviso-acao:'+v.aa+';--fundo:'+v.f+
+    ';--sombra-flutuante:'+(tema==='claro'?'0 10px 24px '+v.s:'0 10px 28px rgba(0,0,0,0.5)')+
+    ';--cat-1:'+v.d+';--cat-2:'+c[0]+';--cat-3:'+c[1]+';--cat-4:'+c[2]+';--cat-5:'+c[3];
+}
+function avatar(id,extra){
+  const a=achar(id);
+  return '<span class="av '+a.id+' '+(extra||'')+'" aria-hidden="true">'+(a.id==='alpha'?'<img src="'+MASCOTE+'" alt="">':ARTE[a.id])+'</span>';
+}
+
+const S={op:'A',tema:'claro',pagos:false,online:true,avatar:'alpha',tela:'inicio',escolher:false,sel:'alpha',origem:'ajustes',aviso:null};
+const cel=document.getElementById('cel');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function nav(atual){
+  const it=[['inicio','Início',I.inicio],['contas','Contas',I.contas],['gastos','Gastos',I.gastos],['dicas','Dicas',I.dicas],['ajustes','Mais',I.mais]];
+  return '<nav class="nav" aria-label="Navegação">'+it.map(([k,n,ic])=>'<button type="button" data-a="ir" data-v="'+(k==='inicio'||k==='ajustes'?k:'inicio')+'"'+(atual===k?' aria-current="page"':'')+'><span class="pil">'+ic+'</span>'+n+'</button>').join('')+'</nav>'+
+    '<button type="button" class="fab" data-a="ir" data-v="chat" aria-label="Falar com o Alpha">'+I.chat+'</button>';
+}
+function grafico(mini){
+  const meses=[['mai',62],['jun',70],['jul',55],['ago',80],['set',66],['out',74]];
+  const cats=[['Mercado',1480,'--cat-1'],['Casa',1210,'--cat-2'],['Carro',830,'--cat-3'],['Saúde',640,'--cat-4'],['Lazer',420,'--cat-5'],['Outros',232,'--cat-outros']];
+  const tot=cats.reduce((s,c)=>s+c[1],0);
+  const brl=v=>'R$ '+v.toLocaleString('pt-BR');
+  return '<div class="barras" role="img" aria-label="Gastos dos últimos 6 meses, outubro em destaque">'+meses.map(([m,h],i)=>'<div class="'+(i===5?'atual':'')+'"><i style="height:'+h+'%"></i><span>'+m+'</span></div>').join('')+'</div>'+
+    (mini?'':'<div class="empilha" aria-hidden="true">'+cats.map(c=>'<i style="width:'+(c[1]/tot*100)+'%;background:var('+c[2]+')"></i>').join('')+'</div>'+
+    '<div class="legendas">'+cats.map(c=>'<span><i style="background:var('+c[2]+')"></i><em>'+c[0]+'</em><b>'+brl(c[1])+'</b></span>').join('')+'</div>');
+}
+function telaInicio(){
+  return '<div class="tela"><div class="topo inicio"><span class="marca" aria-hidden="true">α</span><div class="t"><p class="saudacao">Boa tarde, Ana</p><p class="legenda">Sexta, 24 de outubro</p></div>'+
+  '<button type="button" class="icone-btn" aria-label="Notificações">'+I.sino+'</button></div>'+
+  '<div class="corpo com-nav">'+
+  '<div class="resumo"><div class="linha-topo"><span class="legenda">Gastos de outubro</span><span class="legenda">até hoje</span></div><p class="numero-hero">R$ 4.812,30</p>'+grafico()+'</div>'+
+  '<button type="button" class="atalho">'+I.etiqueta+'<b>Classificar 12 gastos</b>'+I.seta+'</button>'+
+  '<div class="secao"><h2 class="titulo-secao">Precisa de atenção</h2><div class="lista">'+
+  '<div class="linha"><span class="poco atencao">'+I.casa+'</span><span class="t"><b>Aluguel</b><span class="a">Vence hoje</span></span><span class="v">R$ 2.450,00</span></div>'+
+  '<div class="linha"><span class="poco bom">'+I.wifi+'</span><span class="t"><b>Internet</b><span class="b">Paga em 20 de outubro</span></span><span class="v">R$ 119,90</span></div>'+
+  '</div></div><div class="chips"><span class="chip on">Este mês</span><span class="chip">3 meses</span><span class="chip">Ano</span></div></div>'+nav('inicio')+'</div>';
+}
+function telaAjustes(){
+  const a=achar(S.avatar);
+  const op=[['claro','Claro'],['escuro','Escuro'],['auto','Automático']];
+  return '<div class="tela"><div class="topo"><button type="button" class="icone-btn" data-a="ir" data-v="inicio" aria-label="Voltar">'+I.voltar+'</button><h1 class="titulo-tela">Ajustes</h1></div>'+
+  '<div class="corpo com-nav">'+
+  '<div class="secao"><h2 class="titulo-secao" id="tit-av">Avatar do Alpha</h2><div class="lista">'+
+  '<button type="button" class="linha linha-av" data-a="abrir" aria-labelledby="tit-av nome-av">'+avatar(a.id)+'<span class="t"><b id="nome-av">'+esc(a.nome)+'</b><span>'+esc(a.jeito)+'. Muda a cor do app e o rosto do Alpha no chat.</span></span><span class="seta">'+I.seta+'</span></button>'+
+  '</div></div>'+
+  '<div class="secao"><h2 class="titulo-secao" id="tit-tema">Tema</h2><div class="seg" role="radiogroup" aria-labelledby="tit-tema">'+
+  op.map(([v,n])=>'<button type="button" role="radio" aria-checked="'+(v===(S.temaApp||'auto'))+'" data-a="temaapp" data-v="'+v+'">'+n+'</button>').join('')+
+  '</div><p class="legenda">Automático segue o tema do celular. O avatar vale nos dois.</p></div>'+
+  '<div class="secao"><h2 class="titulo-secao">Conta</h2><div class="lista"><div class="linha"><span class="poco">'+I.ajustes+'</span><span class="t"><b>Módulos e ordem</b><span>Liga, desliga e ordena</span></span><span class="seta">'+I.seta+'</span></div></div></div>'+
+  '</div>'+nav('ajustes')+'</div>';
+}
+function telaChat(){
+  return '<div class="tela"><div class="topo-chat"><button type="button" class="icone-btn" data-a="ir" data-v="inicio" aria-label="Voltar">'+I.voltar+'</button>'+
+  '<button type="button" class="quem" data-a="abrir" aria-label="Alpha. Trocar o avatar">'+avatar(S.avatar)+'<span class="t"><b>Alpha</b><span>Toque para trocar o avatar</span></span></button></div>'+
+  '<div class="msgs"><div class="eu">Quanto gastei com mercado este mês?</div>'+
+  '<div class="ele">'+avatar(S.avatar)+'<p>R$ 1.480,00 em 9 compras, R$ 120 a menos que em setembro. A maior foi no Atacadão, R$ 412,30.</p></div>'+
+  '<div class="eu">Me lembra de pagar o aluguel amanhã às 9h</div>'+
+  '<div class="ele">'+avatar(S.avatar)+'<p>Lembrete criado: pagar o aluguel, amanhã às 9:00.</p></div></div>'+
+  '<div class="compor"><span class="campo">Escreva para o Alpha</span><button type="button" class="enviar" aria-label="Enviar">'+I.enviar+'</button></div></div>';
+}
+function previa(id){
+  return '<div class="mini" data-t="'+S.tema+'" style="'+vars(id,S.tema)+'" aria-label="Prévia com o avatar '+esc(achar(id).nome)+'" role="img">'+
+    '<span class="cab-mini">Assim fica o app</span>'+
+    '<div class="fala">'+avatar(id)+'<p>Li a fatura: 42 compras, R$ 3.180,40.</p></div>'+
+    grafico(true)+
+    '<div class="acoes"><span class="btn principal">Marcar como pago</span><span class="chip on">Este mês</span></div></div>';
+}
+function travado(id){return S.pagos&&PAGOS.includes(id)}
+function botaoUsar(){
+  const a=achar(S.sel);
+  if(S.sel===S.avatar)return '<button type="button" class="btn secundario" data-a="fechar">Este é o atual</button>';
+  if(travado(S.sel))return '<button type="button" class="btn principal" data-a="plano">'+I.cadeado+'Ver o Alpha Plus</button><p class="legenda" style="text-align:center">'+esc(a.nome)+' faz parte do Alpha Plus. Ver a prévia é livre.</p>';
+  return '<button type="button" class="btn principal" data-a="usar">Usar '+esc(a.nome)+'</button>';
+}
+function escolherA(){
+  return '<div class="veu" data-a="fundo-veu"><div class="folha" style="'+vars(S.sel,S.tema)+'" role="dialog" aria-modal="true" aria-labelledby="tit-esc"><div class="pega"></div>'+
+  '<div class="cab"><h2 class="titulo-tela" id="tit-esc">Avatar do Alpha</h2><button type="button" class="icone-btn" data-a="fechar" aria-label="Fechar">'+I.fechar+'</button></div>'+
+  '<div class="meio"><p class="legenda">Muda a cor do app e o rosto do Alpha no chat. O jeito de falar continua o mesmo.</p>'+
+  '<div class="grade" role="radiogroup" aria-labelledby="tit-esc">'+AV.map(a=>{
+    const v=a[S.tema];
+    return '<button type="button" class="cartao-av" role="radio" aria-checked="'+(S.sel===a.id)+'" data-a="sel" data-v="'+a.id+'" data-t="'+S.tema+'" style="'+vars(a.id,S.tema)+'">'+
+    (travado(a.id)?'<span class="selo">'+I.cadeado+'Plus</span>':'')+(S.sel===a.id?'<span class="ok">'+I.check+'</span>':'')+
+    avatar(a.id)+'<b>'+esc(a.nome)+'</b><span>'+esc(a.jeito)+'</span>'+
+    '<span class="amostra" aria-hidden="true"><i style="background:'+v.d+'"></i><i style="background:'+v.f+'"></i></span>'+
+    (S.avatar===a.id?'<span>Atual</span>':'')+'</button>';}).join('')+
+  '</div>'+previa(S.sel)+'</div><div class="pe">'+botaoUsar()+'</div></div></div>';
+}
+function escolherB(){
+  const i=AV.findIndex(a=>a.id===S.sel),a=AV[i];
+  return '<div class="tela" style="position:absolute;inset:0;z-index:5;background:var(--fundo);'+vars(a.id,S.tema)+'"><div class="topo"><button type="button" class="icone-btn" data-a="fechar" aria-label="Voltar">'+I.voltar+'</button><h1 class="titulo-tela">Avatar do Alpha</h1></div>'+
+  '<div class="corpo"><div class="carrossel" id="carrossel" data-t="'+S.tema+'" style="'+vars(a.id,S.tema)+'">'+
+  '<div class="linha-c"><button type="button" class="icone-btn" data-a="passo" data-v="-1" aria-label="Avatar anterior"'+(i===0?' disabled style="opacity:.3"':'')+'>'+I.voltar+'</button>'+
+  avatar(a.id)+'<button type="button" class="icone-btn" data-a="passo" data-v="1" aria-label="Próximo avatar"'+(i===AV.length-1?' disabled style="opacity:.3"':'')+'>'+I.seta+'</button></div>'+
+  '<h2 class="titulo-tela" aria-live="polite">'+esc(a.nome)+(travado(a.id)?' <span class="selo" style="position:static;vertical-align:middle">'+I.cadeado+'Plus</span>':'')+'</h2><p class="legenda">'+esc(a.jeito)+(S.avatar===a.id?'. Atual':'')+'</p>'+
+  '<div class="pontos" aria-hidden="true">'+AV.map((x,j)=>'<i class="'+(j===i?'on':'')+'"></i>').join('')+'</div></div>'+
+  previa(a.id)+'<p class="legenda">Arraste para os lados ou use as setas. O jeito de falar do Alpha continua o mesmo.</p></div>'+
+  '<div class="rodape" style="padding:12px 20px 20px;border-top:1px solid var(--linha)">'+botaoUsar()+'</div></div>';
+}
+function render(){
+  cel.dataset.t=S.tema;
+  cel.setAttribute('style',vars(S.avatar,S.tema));
+  let h=S.tela==='inicio'?telaInicio():S.tela==='chat'?telaChat():telaAjustes();
+  if(S.escolher)h+=S.op==='A'?escolherA():escolherB();
+  if(S.aviso)h+='<div class="aviso'+(S.tela==='chat'?' alto':'')+'" role="status"><p>'+esc(S.aviso.txt)+'</p>'+(S.aviso.desfazer?'<button type="button" data-a="desfazer">Desfazer</button>':'')+'</div>';
+  cel.innerHTML=h;
+  painel();
+}
+function seg(id,opcoes,atual,acao){
+  document.getElementById(id).innerHTML=opcoes.map(([v,n])=>'<button type="button" role="radio" aria-checked="'+(v===atual)+'" data-s="'+acao+'" data-v="'+v+'">'+n+'</button>').join('');
+}
+function painel(){
+  seg('sim-op',[['A','A: grade em folha'],['B','B: carrossel']],S.op,'op');
+  seg('sim-tema',[['claro','Claro'],['escuro','Escuro']],S.tema,'tema');
+  seg('sim-pago',[['nao','Todos grátis'],['sim','2 no Plus']],S.pagos?'sim':'nao','pago');
+  seg('sim-net',[['sim','Com'],['nao','Sem']],S.online?'sim':'nao','net');
+  document.getElementById('sim-ir').innerHTML=[['inicio','Início'],['ajustes','Ajustes'],['chat','Chat'],['reiniciar','Recomeçar']].map(([v,n])=>'<button type="button" class="chip" data-s="ir" data-v="'+v+'">'+n+'</button>').join('');
+}
+let tAviso;
+function avisa(txt,desfazer){
+  clearTimeout(tAviso);S.aviso={txt,desfazer};
+  tAviso=setTimeout(()=>{S.aviso=null;render()},6000);
+}
+cel.addEventListener('click',e=>{
+  const b=e.target.closest('[data-a]');if(!b)return;
+  const a=b.dataset.a,v=b.dataset.v;
+  if(a==='fundo-veu'&&e.target!==b)return;
+  if(a==='ir'){S.tela=v;S.escolher=false}
+  else if(a==='abrir'){S.escolher=true;S.sel=S.avatar}
+  else if(a==='fechar'||a==='fundo-veu'){S.escolher=false}
+  else if(a==='sel'){S.sel=v}
+  else if(a==='passo'){const i=AV.findIndex(x=>x.id===S.sel)+Number(v);if(i>=0&&i<AV.length)S.sel=AV[i].id}
+  else if(a==='usar'){
+    const antes=S.avatar;S.avatar=S.sel;S.escolher=false;
+    const n=achar(S.avatar).nome;
+    avisa(S.online?'Avatar: '+n+'.':'Avatar: '+n+'. Vai para a conta quando conectar.',()=>{S.avatar=antes});
+  }
+  else if(a==='plano'){avisa('Aqui abre a tela do plano (A39).',null)}
+  else if(a==='desfazer'){const f=S.aviso&&S.aviso.desfazer;S.aviso=null;if(f)f()}
+  else if(a==='temaapp'){S.temaApp=v;if(v!=='auto')S.tema=v}
+  render();
+});
+/* Arrastar para os lados no carrossel (opção B) */
+let x0=null;
+cel.addEventListener('pointerdown',e=>{if(e.target.closest('#carrossel'))x0=e.clientX});
+cel.addEventListener('pointerup',e=>{
+  if(x0===null)return;const dx=e.clientX-x0;x0=null;
+  if(Math.abs(dx)<40)return;
+  const i=AV.findIndex(x=>x.id===S.sel)+(dx<0?1:-1);
+  if(i>=0&&i<AV.length){S.sel=AV[i].id;render()}
+});
+document.querySelector('.painel').addEventListener('click',e=>{
+  const b=e.target.closest('[data-s]');if(!b)return;
+  const s=b.dataset.s,v=b.dataset.v;
+  if(s==='op')S.op=v;
+  else if(s==='tema'){S.tema=v;S.temaApp=v}
+  else if(s==='pago')S.pagos=v==='sim';
+  else if(s==='net')S.online=v==='sim';
+  else if(s==='ir'){
+    if(v==='reiniciar'){Object.assign(S,{avatar:'alpha',tela:'inicio',escolher:false,sel:'alpha',aviso:null})}
+    else{S.tela=v;S.escolher=false}
+  }
+  render();
+});
+document.documentElement.dataset.theme='light';
+render();
+</script>
+</body>
+</html>
