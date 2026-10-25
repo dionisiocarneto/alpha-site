@@ -4,44 +4,240 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Excluir conta do Alpha</title>
-<meta name="description" content="Como excluir sua conta do Alpha e seus dados, pelo app ou por e-mail.">
+<meta name="description" content="Exclua sua conta do Alpha e seus dados entrando com o Google, sem precisar do app.">
+<meta name="referrer" content="no-referrer">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap">
 <link rel="stylesheet" href="estilo.css">
+<!-- supabase-js em versão fixa, conferida pelo integrity (A11). Trocar a versão pede o hash novo. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous"></script>
 </head>
 <body>
 <header class="topo"><a href="index.html"><span class="marca" aria-hidden="true">α</span>Alpha DCN Tech</a></header>
 <nav aria-label="Páginas"><a href="index.html">Início</a><a href="privacidade.html">Privacidade</a><a href="termos.html">Termos de uso</a><a href="excluir-conta.html" aria-current="page">Excluir conta</a></nav>
-<main class="conteudo">
+<main class="conteudo" id="conteudo">
+
+<!-- Entrar: só aparece quem ainda não entrou -->
+<section id="tela-inicio" class="tela">
 <h1>Excluir sua conta do Alpha</h1>
-<p>O Alpha, de Alpha DCN Tech (Dionisio Carmignan Neto Tecnologia da Informação Ltda), deixa você apagar a conta e todos os seus dados quando quiser, sem precisar reinstalar o app.</p>
-<section class="cartao">
-<h2 style="margin-top:0">Pelo app (na hora)</h2>
-<ol>
-<li>Abra o Alpha.</li>
-<li>Toque em <strong>Mais</strong> e depois em <strong>Ajustes</strong>.</li>
-<li>Toque em <strong>Excluir conta</strong> e confirme.</li>
-</ol>
+<p class="intro">Entre com a mesma conta Google que você usa no app. Você vê o que será apagado e confirma. Não precisa do app instalado.</p>
+<div class="botoes-tela"><button type="button" class="btn btn-google" id="entrar"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" d="M6.4 14a6 6 0 0 1 0-3.9V7.5H3.1a10 10 0 0 0 0 9z"/><path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.8-2.8A10 10 0 0 0 3.1 7.5l3.3 2.6C7.2 7.8 9.4 6 12 6z"/></svg>Entrar com Google</button></div>
+<div class="faixa" id="desligada" hidden><span>A exclusão por esta página ainda não está ligada. Use o app ou o e-mail abaixo.</span></div>
+<div class="faixa erro" id="erro-entrar" role="alert" hidden><span>Não deu para entrar com o Google. Tente de novo.</span></div>
+<p class="fim">Entrar aqui serve só para excluir: se não houver conta Alpha com esse Google, nada é guardado.</p>
+<p class="fim">Prefere por e-mail? Escreva para <a href="mailto:alpha.dcntecnologia@gmail.com">alpha.dcntecnologia@gmail.com</a> a partir do mesmo e-mail Google, com o assunto "Excluir conta". Excluímos e avisamos em até 15 dias.</p>
+<p class="fim">Ainda tem o app? Também dá para excluir em Mais, Ajustes, Excluir conta.</p>
 </section>
-<section class="cartao">
-<h2 style="margin-top:0">Sem o app (por e-mail)</h2>
-<ol>
-<li>Mande um e-mail para <a href="mailto:alpha.dcntecnologia@gmail.com">alpha.dcntecnologia@gmail.com</a> <strong>a partir do mesmo e-mail Google que você usa no Alpha</strong>, com o assunto "Excluir conta".</li>
-<li>Se precisarmos confirmar que a conta é sua, respondemos pedindo isso.</li>
-<li>Excluímos a conta e avisamos por e-mail em até 15 dias.</li>
-</ol>
+
+<!-- Confirmar: os mesmos textos e as mesmas duas travas do app (compartilhado/textos/excluir-conta.ts no alpha-ia) -->
+<section id="tela-confirmar" class="tela" hidden>
+<h1>Excluir conta</h1>
+<p class="intro">Isto apaga a sua conta e tudo o que você guardou no Alpha, na hora. Não dá para desfazer.</p>
+<div class="lista"><div class="linha"><span class="t"><b>Conta que será excluída</b><span id="email"></span></span><button type="button" class="btn texto" id="trocar">Trocar</button></div></div>
+<h2 class="secao">Some na hora</h2>
+<div class="lista">
+<div class="linha"><span class="t"><b>Contas, gastos, faturas e extratos</b><span>Inclui cartões, bancos e categorias</span></span></div>
+<div class="linha"><span class="t"><b>Lembretes, tarefas e dicas</b><span>E os avisos já agendados</span></span></div>
+<div class="linha"><span class="t"><b>Conversas com o Alpha</b><span>Todo o histórico do chat</span></span></div>
+<div class="linha"><span class="t"><b>Arquivos</b><span>PDFs e fotos que você mandou</span></span></div>
+<div class="linha"><span class="t"><b>Perfil e preferências</b><span>Nome, fuso, módulos, tema e o que você aceitou</span></span></div>
+<div class="linha"><span class="t"><b>Aparelhos e uso do app</b><span>Celulares ligados aos avisos e as telas que você usou</span></span></div>
+</div>
+<h2 class="secao">Fica por obrigação legal</h2>
+<div class="lista"><div class="linha"><span class="t"><b>Registros de acesso</b><span>Data, hora e IP de cada vez que você entrou. A lei (Marco Civil, art. 15) pede 6 meses. Ficam separados, ninguém usa, e são apagados sozinhos no prazo.</span></span></div></div>
+<h2 class="secao">Cópia de segurança</h2>
+<!-- Teste fechado, sem backup (docs/engenharia/banco.md, seção 5, no alpha-ia). Muda junto com o app quando o backup ligar. -->
+<div class="lista"><div class="linha"><span class="t"><b>Sem cópia</b><span>Banco e arquivos são apagados na hora e não há cópia de segurança.</span></span></div></div>
+<h2 class="secao">Confirmar</h2>
+<div class="campo">
+<button type="button" class="caixa" role="checkbox" aria-checked="false" id="caixa"><span class="q" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="m5 12 5 5 9-10"/></svg></span><span>Quero excluir sem guardar uma cópia dos meus dados. Entendo que eles não voltam.</span></button>
+<label for="confirma">Para confirmar, escreva excluir</label>
+<input id="confirma" type="text" autocomplete="off" autocapitalize="none" spellcheck="false">
+</div>
+<div class="faixa erro" id="nao-terminou" role="alert" hidden><span>A exclusão não terminou. Toque de novo para concluir: ela continua de onde parou.</span></div>
+<div class="botoes-tela">
+<button type="button" class="btn perigo" id="excluir" disabled>Excluir minha conta</button>
+<button type="button" class="btn secundario" id="cancelar">Cancelar</button>
+</div>
 </section>
-<h2>O que é apagado</h2>
-<p>Tudo o que é seu: perfil (nome, e-mail e foto), contas a pagar, gastos, faturas e extratos, lembretes, tarefas, dicas, contatos, conversas com o Alpha, arquivos enviados, preferências e o identificador do aparelho para notificações. Banco e arquivos são apagados na hora. Durante o teste fechado não há cópia de segurança; quando o app abrir para todos, o dado apagado ainda existe nas cópias de segurança por até 7 dias e depois some sozinho.</p>
-<h2>O que fica, por obrigação legal</h2>
-<ul>
-<li>Registros de acesso (endereço IP, data e hora) por 6 meses, como exige o Marco Civil da Internet (art. 15). Ficam separados do resto e são apagados sozinhos no fim do prazo.</li>
-<li>O que a lei fiscal exigir sobre a assinatura, pelo prazo que ela exigir.</li>
-</ul>
-<h2>Quer apagar só uma parte?</h2>
-<p>Cada item e cada arquivo tem botão para apagar dentro do app, sem excluir a conta. Para outros pedidos sobre seus dados, escreva para <a href="mailto:alpha.dcntecnologia@gmail.com">alpha.dcntecnologia@gmail.com</a>. Mais detalhes na <a href="privacidade.html">Política de Privacidade</a>.</p>
+
+<section id="tela-excluindo" class="tela centro" role="status" hidden>
+<div class="girando" aria-hidden="true"></div>
+<h1>Excluindo sua conta</h1>
+<p>Leva alguns segundos. Não feche esta página.</p>
+</section>
+
+<section id="tela-pronto" class="tela centro" role="status" hidden>
+<h1>Conta excluída</h1>
+<p>Seus dados foram apagados e você saiu desta página. Se o app ainda estiver num celular, ele volta para Entrar na próxima vez que abrir.</p>
+<p class="fim">Entrar de novo cria uma conta nova, vazia.</p>
+</section>
+
+<section id="tela-sem-conta" class="tela centro" role="status" hidden>
+<h1>Nenhuma conta Alpha com este Google</h1>
+<p><span id="email-sem-conta"></span> não tem conta no Alpha. Nada foi guardado.</p>
+<div class="botoes-tela"><button type="button" class="btn secundario" id="outra">Entrar com outra conta</button></div>
+</section>
+
 </main>
 <footer class="rodape">Dionisio Carmignan Neto Tecnologia da Informação Ltda · CNPJ 68.264.625/0001-02 · Campinas/SP · <a href="mailto:alpha.dcntecnologia@gmail.com">alpha.dcntecnologia@gmail.com</a></footer>
+<script>
+(function () {
+  "use strict";
+  // Projeto de produção do Supabase: a URL e a chave pública são as mesmas do app (protegidas pela RLS).
+  // Nunca a chave de serviço. Vazias: a página mostra só o caminho pelo app e pelo e-mail.
+  var config = { url: "", chave: "" };
+
+  var telas = ["inicio", "confirmar", "excluindo", "pronto", "sem-conta"];
+  function el(id) { return document.getElementById(id); }
+  function mostrar(nome) {
+    telas.forEach(function (t) { el("tela-" + t).hidden = t !== nome; });
+    var titulo = el("tela-" + nome).querySelector("h1");
+    if (titulo) { titulo.tabIndex = -1; titulo.focus(); }
+  }
+
+  if (!config.url || !config.chave || !window.supabase) {
+    el("entrar").hidden = true;
+    el("desligada").hidden = false;
+    return;
+  }
+
+  var cliente = window.supabase.createClient(config.url, config.chave, {
+    auth: { flowType: "pkce", detectSessionInUrl: true, persistSession: true, autoRefreshToken: true },
+  });
+  var sessao = null;
+  var ocupado = false;
+
+  // Maiúsculas e espaços nas pontas não importam (critério 5, igual a confirmacaoValida do app).
+  function podeExcluir() {
+    return el("caixa").getAttribute("aria-checked") === "true" && el("confirma").value.trim().toLowerCase() === "excluir";
+  }
+  function atualizarBotao() { el("excluir").disabled = ocupado || !podeExcluir(); }
+
+  // Conta criada por esta mesma entrada (Google sem conta Alpha): o servidor confere de novo
+  // (conta_nova_da_web: menos de 5 minutos e um só acesso) antes de apagar sem gravar em exclusoes.
+  function criadaAgora(usuario) {
+    var criada = Date.parse(usuario.created_at || "");
+    var entrou = Date.parse(usuario.last_sign_in_at || "");
+    return isFinite(criada) && isFinite(entrou) && Math.abs(entrou - criada) < 10000 && Date.now() - criada < 5 * 60000;
+  }
+
+  async function sairDaqui() {
+    // A pessoa já não existe no Auth depois de excluir: só limpa o que ficou neste navegador.
+    try { await cliente.auth.signOut({ scope: "local" }); } catch (_) { /* sem sessão para encerrar */ }
+    try {
+      Object.keys(localStorage).forEach(function (k) { if (k.indexOf("sb-") === 0) localStorage.removeItem(k); });
+      sessionStorage.clear();
+    } catch (_) { /* armazenamento bloqueado: nada guardado */ }
+    sessao = null;
+  }
+
+  async function pedirExclusao() {
+    var resposta = await fetch(config.url + "/functions/v1/excluir-conta", {
+      method: "POST",
+      headers: {
+        authorization: "Bearer " + sessao.access_token,
+        apikey: config.chave,
+        "content-type": "application/json",
+        "x-alpha-versao": "web",
+        "x-alpha-plataforma": "web",
+      },
+      body: JSON.stringify({ tipo: "pessoa", origem: "web" }),
+    });
+    var corpo = await resposta.json().catch(function () { return {}; });
+    if (resposta.ok && (corpo.resultado === "excluida" || corpo.resultado === "sem_conta")) return corpo.resultado;
+    if (corpo.erro === "nao_entrou") return "nao_entrou";
+    throw new Error(corpo.erro || "erro_servidor");
+  }
+
+  async function concluir(resultado) {
+    var email = sessao && sessao.user ? sessao.user.email || "" : "";
+    await sairDaqui();
+    if (resultado === "sem_conta") {
+      el("email-sem-conta").textContent = email || "Este Google";
+      mostrar("sem-conta");
+    } else if (resultado === "nao_entrou") {
+      mostrar("inicio");
+    } else {
+      mostrar("pronto");
+    }
+  }
+
+  async function semContaAlpha() {
+    mostrar("excluindo");
+    try {
+      await concluir(await pedirExclusao());
+    } catch (_) {
+      // Falhou: a confirmação repete o mesmo pedido, e o servidor apaga a conta vazia do mesmo jeito.
+      mostrarConfirmar();
+      el("nao-terminou").hidden = false;
+    }
+  }
+
+  function mostrarConfirmar() {
+    el("email").textContent = sessao.user.email || "";
+    el("caixa").setAttribute("aria-checked", "false");
+    el("confirma").value = "";
+    el("nao-terminou").hidden = true;
+    atualizarBotao();
+    mostrar("confirmar");
+  }
+
+  el("entrar").addEventListener("click", async function () {
+    el("erro-entrar").hidden = true;
+    var volta = location.origin + location.pathname;
+    var r = await cliente.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: volta, queryParams: { prompt: "select_account" } },
+    });
+    if (r.error) el("erro-entrar").hidden = false;
+  });
+
+  el("caixa").addEventListener("click", function () {
+    var marcada = el("caixa").getAttribute("aria-checked") === "true";
+    el("caixa").setAttribute("aria-checked", marcada ? "false" : "true");
+    atualizarBotao();
+  });
+  el("confirma").addEventListener("input", atualizarBotao);
+
+  el("excluir").addEventListener("click", async function () {
+    if (!podeExcluir() || ocupado) return;
+    ocupado = true;
+    el("nao-terminou").hidden = true;
+    mostrar("excluindo");
+    try {
+      await concluir(await pedirExclusao());
+    } catch (_) {
+      mostrar("confirmar");
+      el("nao-terminou").hidden = false;
+    } finally {
+      ocupado = false;
+      atualizarBotao();
+    }
+  });
+
+  async function trocarConta() {
+    await sairDaqui();
+    mostrar("inicio");
+  }
+  el("cancelar").addEventListener("click", trocarConta);
+  el("trocar").addEventListener("click", trocarConta);
+  el("outra").addEventListener("click", trocarConta);
+
+  (async function comecar() {
+    var lido = await cliente.auth.getSession();
+    // Tira o ?code= da barra depois de trocar pelo login (volta do Google).
+    if (location.search) history.replaceState(null, "", location.pathname);
+    sessao = lido.data ? lido.data.session : null;
+    if (!sessao) {
+      if (lido.error) el("erro-entrar").hidden = false;
+      return;
+    }
+    if (criadaAgora(sessao.user)) await semContaAlpha();
+    else mostrarConfirmar();
+  })();
+})();
+</script>
 </body>
 </html>
